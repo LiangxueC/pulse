@@ -1,0 +1,47 @@
+[
+  {
+    "id": "case9",
+    "date": "2026-04-16",
+    "label": "4/16/26: Late invoices"
+  },
+  {
+    "id": "case8",
+    "date": "2026-04-16",
+    "label": "4/16/26: Late invoices"
+  },
+  {
+    "id": "case7",
+    "date": "2026-04-16",
+    "label": "4/16/26: Late invoices"
+  },
+  {
+    "id": "case6",
+    "date": "2026-04-14",
+    "label": "4/14/26: Late invoices"
+  },
+  {
+    "id": "case5",
+    "date": "2026-04-14",
+    "label": "4/14/26: Late invoices"
+  },
+  {
+    "id": "case4",
+    "date": "2026-04-14",
+    "label": "4/14/26: Late invoices"
+  },
+  {
+    "id": "case5",
+    "date": "2026-04-14",
+    "label": "4/14/26: Underused subscriptions"
+  },
+  {
+    "id": "case1",
+    "date": "2026-02-20",
+    "label": "2/20/26: Late invoice, underused subscriptions, payroll"
+  },
+  {
+    "id": "case2",
+    "date": "2026-01-15",
+    "label": "1/15/26: Inventory, vendor costs"
+  }
+]

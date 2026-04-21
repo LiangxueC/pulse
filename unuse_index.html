@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pulse — QuickBooks Prototype · Mar 24 Deliverable</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --qb-green:#2ca01c;--qb-teal:#0077c5;
+  --border:#d4d4d4;--bg:#f4f4f6;--card:#fff;
+  --text:#1a1a1a;--muted:#666;--subtle:#999;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fcd34d;
+  --green:#16a34a;--red:#dc2626;
+  --btn:#e5e5e5;--btn-hover:#d5d5d5;--btn-active:#c5c5c5;
+  --radius:8px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --shadow:0 1px 4px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.14);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+
+/* ── BANNER ── */
+.banner{background:linear-gradient(90deg,#117a65,#0d9488 50%,#0077c5);color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:500}
+.banner button{background:#fff;color:#0d7a6b;border:none;border-radius:4px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px;cursor:pointer}
+
+/* ── TOP NAV ── */
+.nav{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;height:52px;gap:14px;position:sticky;top:0;z-index:300}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-box{width:32px;height:32px;background:var(--qb-green);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+.logo-text{line-height:1;font-size:11px;color:#2ca01c}
+.logo-text span{display:block;font-size:15px;font-weight:800;letter-spacing:-.5px}
+.company-pill{font-size:13px;color:var(--muted);border-left:1px solid var(--border);padding-left:14px}
+.search{flex:1;max-width:500px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:13px;color:var(--subtle)}
+.nav-actions{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--muted)}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:#c7d2e0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4a5568}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:calc(100vh - 88px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:70px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:2px;flex-shrink:0}
+.si{display:flex;flex-direction:column;align-items:center;padding:8px 6px;gap:3px;border-radius:6px;cursor:pointer;width:62px;font-size:10px;color:var(--muted);transition:background .12s}
+.si:hover{background:var(--bg)}
+.si.act{background:#e8f5e9;color:var(--qb-green)}
+.si svg,.si .sico{font-size:18px;line-height:1}
+.si-rule{width:36px;height:1px;background:var(--border);margin:4px 0}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:28px 36px;position:relative}
+
+/* ── SCREEN SYSTEM ── */
+.screen{display:none}
+.screen.on{display:block;animation:fadeUp .18s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TYPOGRAPHY ── */
+.page-h{font-size:24px;font-weight:700;margin-bottom:24px;letter-spacing:-.3px}
+.greeting{font-size:26px;font-weight:700;text-align:center;margin-bottom:22px;letter-spacing:-.4px}
+
+/* ── MODULE TABS ── */
+.module-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:22px;padding-bottom:2px;scrollbar-width:none}
+.module-row::-webkit-scrollbar{display:none}
+.mtab{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;background:#fff;border:1px solid var(--border);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s}
+.mtab:hover{background:#f0f0f0}
+.mico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+
+/* ── ACTION CHIPS ── */
+.actions-row{display:flex;align-items:center;gap:9px;margin-bottom:22px;flex-wrap:wrap}
+.act-label{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.chip{padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:#fff;font-size:13px;cursor:pointer;transition:background .12s}
+.chip:hover{background:#f0f0f0}
+.chip.link{color:var(--qb-teal)}
+
+/* ── DASHBOARD GRID ── */
+.dash-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:26px}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px}
+.card-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+
+/* ── HEALTH BAR ── */
+.bar-track{width:100%;height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:14px;transition:box-shadow .15s}
+.bar-track:hover{box-shadow:0 0 0 3px rgba(217,119,6,.2)}
+.bar-fill{height:100%;border-radius:8px;transition:width .5s ease,background .4s ease}
+.bar-fill.amber{background:linear-gradient(90deg,#f59e0b,#d97706);width:58%}
+.bar-fill.green{background:linear-gradient(90deg,#4ade80,#16a34a);width:88%}
+.bar-fill.red{background:linear-gradient(90deg,#f87171,#dc2626);width:26%}
+
+/* status badge */
+.badge{display:inline-flex;align-items:center;gap:7px;border:1.5px solid #d1d5db;border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;transition:box-shadow .15s}
+.badge:hover{box-shadow:0 0 0 3px rgba(217,119,6,.18)}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot.amber{background:#d97706}
+.dot.green{background:#16a34a}
+.dot.red{background:#dc2626}
+
+/* ── CHAT NOW CARD ── */
+.chat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chat-card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pulse-av{width:32px;height:32px;border-radius:50%;background:#9ca3af;flex-shrink:0}
+.chat-card-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chat-card-body{font-size:14px;line-height:1.5;margin-bottom:16px;color:var(--text)}
+
+/* ── STATUS ROW ── */
+.status-row{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.bar-full{flex:1;height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden}
+.bar-full-fill{height:100%;border-radius:8px;transition:width .5s,background .4s}
+
+/* ── REASON GRID ── */
+.reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
+.info-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.info-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.info-title{font-size:19px;font-weight:700;line-height:1.3;margin-bottom:14px;letter-spacing:-.2px}
+.info-body{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* ── BUTTONS ── */
+.ghost{padding:7px 16px;border-radius:5px;background:var(--btn);border:1px solid #c8c8c8;font-size:13px;font-weight:500;cursor:pointer;transition:background .12s;font-family:var(--font)}
+.ghost:hover{background:var(--btn-hover)}
+
+/* ── AGENT MSG ── */
+.agent-msg{display:flex;align-items:flex-start;gap:13px;margin-bottom:18px}
+.agent-av{width:36px;height:36px;border-radius:50%;background:#9ca3af;flex-shrink:0;margin-top:1px}
+.agent-txt{font-size:15px;line-height:1.55;font-weight:500;max-width:780px}
+
+/* ── CTA ROW ── */
+.cta-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:780px}
+.cta{padding:15px;border-radius:7px;background:var(--btn);border:1.5px solid #c4c4c4;font-size:15px;font-weight:500;cursor:pointer;text-align:center;transition:background .12s,transform .08s;font-family:var(--font)}
+.cta:hover{background:var(--btn-hover);transform:translateY(-1px)}
+.cta:active{transform:translateY(0)}
+.cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.cta.primary{background:var(--qb-green);color:#fff;border-color:var(--qb-green)}
+.cta.primary:hover{background:#249614}
+
+/* ── COMPLETED TASK ── */
+.done-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px;max-width:780px}
+.done-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.done-title{font-size:20px;font-weight:700;margin-bottom:14px;letter-spacing:-.2px}
+
+/* ── STEPS ── */
+.steps{display:flex;flex-direction:column;gap:7px;margin-bottom:22px;max-width:780px}
+.step{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:15px 18px;display:flex;align-items:flex-start;gap:13px;cursor:pointer;transition:border-color .15s,background .15s}
+.step.checked{border-color:#16a34a;background:#f0fdf4}
+.step-num{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-top:2px;min-width:44px}
+.step-body{flex:1}
+.step-txt{font-size:15px;font-weight:500;line-height:1.4}
+.step-txt a{color:var(--qb-teal);text-decoration:underline;cursor:pointer}
+.step-txt strong{font-weight:700}
+.cb{width:18px;height:18px;border-radius:4px;border:1.5px solid #aaa;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:11px;color:#fff}
+.cb.on{background:#16a34a;border-color:#16a34a}
+
+/* ── CHAT PANEL ── */
+.chat-panel{position:fixed;right:-410px;top:88px;bottom:0;width:390px;background:#fff;border-left:1px solid var(--border);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transition:right .25s cubic-bezier(.4,0,.2,1);z-index:400}
+.chat-panel.open{right:0}
+.chat-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.chat-hd-left{display:flex;align-items:center;gap:10px}
+.chat-hd-title{font-size:15px;font-weight:600}
+.chat-close-btn{width:28px;height:28px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:16px;color:#555;display:flex;align-items:center;justify-content:center;transition:background .12s;line-height:1}
+.chat-close-btn:hover{background:#e0e0e0}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:84%}
+.msg.a{align-self:flex-start}
+.msg.u{align-self:flex-end}
+.bubble{padding:10px 13px;border-radius:12px;font-size:14px;line-height:1.5}
+.msg.a .bubble{background:var(--bg);border-radius:4px 12px 12px 12px}
+.msg.u .bubble{background:var(--qb-green);color:#fff;border-radius:12px 12px 4px 12px}
+.msg-sender{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.chat-ft{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.attach-btn{width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .12s}
+.attach-btn:hover{background:#e8e8e8}
+.chat-in{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 15px;font-size:14px;font-family:var(--font);outline:none;transition:border-color .15s}
+.chat-in:focus{border-color:var(--qb-green)}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:28px;right:28px;display:none;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:26px;padding:10px 18px 10px 11px;box-shadow:var(--shadow-lg);cursor:pointer;z-index:350;font-size:14px;font-weight:600;transition:box-shadow .15s,transform .15s}
+.fab:hover{box-shadow:0 12px 40px rgba(0,0,0,.18);transform:translateY(-2px)}
+.fab.show{display:flex}
+.fab .pulse-av{width:28px;height:28px}
+
+/* ── MISC ── */
+.spacer{height:20px}
+.biz-h{font-size:16px;font-weight:600;margin-bottom:13px}
+.placeholder-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:28px;color:var(--subtle);font-size:13px;text-align:center}
+
+/* ── DEV BADGE ── */
+.dev-badge{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:11px;padding:5px 14px;border-radius:20px;z-index:500;opacity:.75;pointer-events:none;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  Buy now and save 90% for 3 months <button>Subscribe now</button>
+</div>
+
+<nav class="nav">
+  <a class="logo" href="#">
+    <div class="logo-box">QB</div>
+    <div class="logo-text">INTUIT<span>quickbooks</span></div>
+  </a>
+  <div class="company-pill">Sample Company-7-8-25</div>
+  <div class="search">
+    <svg width="14" height="14" fill="none" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" stroke="#999" stroke-width="1.5"/><path d="M13 13l3 3" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Search for transactions, contacts, reports, help and more
+  </div>
+  <div class="nav-actions">
+    <span>Contact experts</span>
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4A7 7 0 0 0 19 12V8a7 7 0 1 0-14 0v4a7 7 0 0 0 .4 3.6L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="#666" stroke-width="1.5"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="#666" stroke-width="1.5"/></svg>
+    <div class="nav-avatar">AC</div>
+  </div>
+</nav>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#999" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg><span>Create</span></div>
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5z" stroke="#999" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Bookmarks</span></div>
+    <div class="si act"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#2ca01c" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#2ca01c" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#2ca01c" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="#2ca01c" stroke-width="1.5"/></svg><span>Dashboard</span></div>
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg><span>Feed</span></div>
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reports</span></div>
+    <div class="si-rule"></div>
+    <div class="si" style="color:#2ca01c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#2ca01c" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Accounting</span></div>
+    <div class="si" style="color:#d97706"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#d97706" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/></svg><span>Expenses</span></div>
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1" fill="#999"/><circle cx="12" cy="12" r="1" fill="#999"/><circle cx="19" cy="12" r="1" fill="#999"/></svg><span>More</span></div>
+    <div class="si-rule"></div>
+    <div class="si"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="#999" stroke-width="1.5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg><span>Customize</span></div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main">
+
+    <!-- ══════════════════════════════════
+         S1 · DASHBOARD
+    ══════════════════════════════════ -->
+    <div class="screen on" id="s-dash">
+      <div class="greeting">Good afternoon, Angela Chan!</div>
+
+      <div class="module-row">
+        <div class="mtab"><div class="mico" style="background:#e8f5e9">🧮</div>Accounting</div>
+        <div class="mtab"><div class="mico" style="background:#fff3e0">💸</div>Expenses &amp; Pay Bills</div>
+        <div class="mtab"><div class="mico" style="background:#e3f2fd">💰</div>Sales &amp; Get Paid</div>
+        <div class="mtab"><div class="mico" style="background:#fce4ec">👥</div>Customers</div>
+        <div class="mtab"><div class="mico" style="background:#f3e5f5">👤</div>Team</div>
+        <div class="mtab"><div class="mico" style="background:#e0f7fa">⏱</div>Time</div>
+        <div class="mtab"><div class="mico" style="background:#e8eaf6">📋</div>Projects</div>
+        <div class="mtab" style="font-weight:600;color:#aaa">›</div>
+      </div>
+
+      <div class="actions-row">
+        <div class="act-label">Create actions</div>
+        <div class="chip">Get paid online</div>
+        <div class="chip">Create invoice</div>
+        <div class="chip">Record expense</div>
+        <div class="chip">Add bank deposit</div>
+        <div class="chip">Create check</div>
+        <div class="chip link">Show all</div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-label">Your Projected Lowest Cash Balance</div>
+          <div class="bar-track" id="d-track" onclick="go('s-detail')" title="Click to view details">
+            <div class="bar-fill amber" id="d-fill"></div>
+          </div>
+          <div class="badge" id="d-badge" onclick="go('s-detail')">
+            <div class="dot amber" id="d-dot"></div>
+            <span id="d-txt">Amber (Take a look)</span>
+          </div>
+        </div>
+
+        <div class="chat-card">
+          <div class="chat-card-head">
+            <div class="pulse-av"></div>
+            <div class="chat-card-title">Chat with Pulse</div>
+          </div>
+          <div class="chat-card-body">Have a question about your cash flow? Pulse is your personal assistant!</div>
+          <button class="ghost" style="width:100%" onclick="openChat()">Chat now</button>
+        </div>
+      </div>
+
+      <div class="biz-h">Business at a glance</div>
+      <div class="placeholder-card">Sales funnel &amp; bank account widgets appear here</div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         S2 · HEALTH DETAIL
+    ══════════════════════════════════ -->
+    <div class="screen" id="s-detail">
+      <div class="page-h">Your projected lowest cash balance</div>
+
+      <div class="status-row">
+        <div class="badge" id="det-badge">
+          <div class="dot amber" id="det-dot"></div>
+          <span id="det-txt">Amber (Take a look)</span>
+        </div>
+        <div class="bar-full">
+          <div class="bar-full-fill bar-fill amber" id="det-fill"></div>
+        </div>
+      </div>
+
+      <div class="reason-grid">
+        <div class="info-card">
+          <div class="info-label">Reason</div>
+          <div class="info-title">Chen Group owes you $8,000 and is 12 days late</div>
+          <button class="ghost" onclick="alert('Opening invoice for Chen Group…')">See invoice</button>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Suggested Next Steps</div>
+          <div class="info-title">Send a payment reminder</div>
+          <div class="info-body">If paid on March 16th, bar turns green. If unpaid, bar turns red.</div>
+        </div>
+      </div>
+
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Now that I've explained the reason behind your health bar status and suggested next steps, would you like me to take action or would you like to do it yourself?</div>
+      </div>
+
+      <div class="cta-row">
+        <button class="cta" onclick="go('s-action')">Take action</button>
+        <button class="cta" onclick="go('s-myself')">Do it myself</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         S3 · TAKE ACTION → CONFIRMED
+    ══════════════════════════════════ -->
+    <div class="screen" id="s-action">
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Now that I've explained the reason behind your health bar status and suggested next steps, would you like me to take action or would you like to do it yourself?</div>
+      </div>
+      <div class="cta-row" style="margin-bottom:26px;pointer-events:none;opacity:.55">
+        <button class="cta">Take action</button>
+        <button class="cta">Do it myself</button>
+      </div>
+
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Ok, I've sent the payment reminder to Chen Group, with a new deadline for March 16th. Please review and let me know if this issue is done!</div>
+      </div>
+
+      <div class="done-card">
+        <div class="done-label">Completed Task</div>
+        <div class="done-title">Invoice Reminder</div>
+        <button class="ghost" onclick="alert('Opening sent reminder…')">See sent reminder</button>
+      </div>
+
+      <div class="cta-row">
+        <button class="cta" onclick="go('s-detail')">Tackle another issue</button>
+        <button class="cta" onclick="go('s-close')">All done</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         S4 · CLOSE CASE
+    ══════════════════════════════════ -->
+    <div class="screen" id="s-close">
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Ok, I've sent the payment reminder to Chen Group, with a new deadline for March 16th. Please review and let me know if this issue is done!</div>
+      </div>
+
+      <div class="done-card">
+        <div class="done-label">Completed Task</div>
+        <div class="done-title">Invoice Reminder</div>
+        <button class="ghost" onclick="alert('Opening sent reminder…')">See sent reminder</button>
+      </div>
+
+      <div class="cta-row" style="margin-bottom:26px;pointer-events:none;opacity:.55">
+        <button class="cta">Tackle another issue</button>
+        <button class="cta">All done</button>
+      </div>
+
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Ok great! I'll go ahead and close this case.</div>
+      </div>
+
+      <div style="margin-top:8px">
+        <button class="cta" style="width:260px" onclick="resolve()">Back to dashboard</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         S6 · DO IT MYSELF
+    ══════════════════════════════════ -->
+    <div class="screen" id="s-myself">
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Now that I've explained the reason behind your health bar status and suggested next steps, would you like me to take action or would you like to do it yourself?</div>
+      </div>
+      <div class="cta-row" style="margin-bottom:26px;pointer-events:none;opacity:.55">
+        <button class="cta">Take action</button>
+        <button class="cta">Do it myself</button>
+      </div>
+
+      <div class="agent-msg">
+        <div class="agent-av"></div>
+        <div class="agent-txt">Ok, here are the steps for sending out a payment reminder.</div>
+      </div>
+
+      <div class="steps" id="steps">
+        <div class="step" id="step1" onclick="tick(1)">
+          <div class="cb" id="cb1"></div>
+          <div class="step-num">Step 1</div>
+          <div class="step-body">
+            <div class="step-txt">Go to <a onclick="event.stopPropagation();alert('Navigating to Sales → Invoices…')">Sales</a> and then <strong>Invoices</strong></div>
+          </div>
+        </div>
+        <div class="step" id="step2" onclick="tick(2)">
+          <div class="cb" id="cb2"></div>
+          <div class="step-num">Step 2</div>
+          <div class="step-body">
+            <div class="step-txt">Find the invoice for Chen Group</div>
+          </div>
+        </div>
+        <div class="step" id="step3" onclick="tick(3)">
+          <div class="cb" id="cb3"></div>
+          <div class="step-num">Step 3</div>
+          <div class="step-body">
+            <div class="step-txt">Select <strong>Send reminder</strong> from the dropdown menu</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="cta" onclick="alert('Showing detailed sub-steps…')">Give me more details</button>
+        <button class="cta" id="finish-btn" disabled onclick="go('s-close')">I've finished all the steps</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FAB -->
+<div class="fab" id="fab" onclick="openChat()">
+  <div class="pulse-av"></div>
+  Chat with Pulse
+</div>
+
+<!-- CHAT PANEL (S5) -->
+<div class="chat-panel" id="chat">
+  <div class="chat-hd">
+    <div class="chat-hd-left">
+      <div class="pulse-av"></div>
+      <div class="chat-hd-title">Chat with Pulse</div>
+    </div>
+    <button class="chat-close-btn" onclick="closeChat()">⌄</button>
+  </div>
+  <div class="chat-msgs" id="msgs">
+    <div class="msg a">
+      <div class="msg-sender">Pulse</div>
+      <div class="bubble">Hi, how can I help?</div>
+    </div>
+    <div class="msg u">
+      <div class="bubble">Can you explain more about the suggested next steps?</div>
+    </div>
+  </div>
+  <div class="chat-ft">
+    <button class="attach-btn">📎</button>
+    <input class="chat-in" id="chat-in" type="text" placeholder="Type a message" onkeydown="if(event.key==='Enter')send()"/>
+  </div>
+</div>
+
+<div class="dev-badge">Pulse · Functional Prototype · Dev Deliverable Mar 24</div>
+
+<script>
+// ── STATE ──
+let status = 'amber';
+const checked = new Set();
+
+const STATUS = {
+  amber: { label:'Amber (Take a look)', cls:'amber' },
+  green: { label:'Green (Looking good!)', cls:'green' },
+  red:   { label:'Red (Needs attention)', cls:'red' },
+};
+
+function syncStatus() {
+  const s = STATUS[status];
+  // dashboard bar
+  const df = document.getElementById('d-fill');
+  df.className = 'bar-fill ' + s.cls;
+  document.getElementById('d-dot').className = 'dot ' + s.cls;
+  document.getElementById('d-txt').textContent = s.label;
+  // detail bar
+  const detf = document.getElementById('det-fill');
+  detf.className = 'bar-fill ' + s.cls;
+  document.getElementById('det-dot').className = 'dot ' + s.cls;
+  document.getElementById('det-txt').textContent = s.label;
+}
+
+// ── NAVIGATION ──
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.getElementById('main').scrollTop = 0;
+  const fab = document.getElementById('fab');
+  fab.classList.toggle('show', id !== 's-dash');
+  syncStatus();
+}
+
+function resolve() {
+  status = 'green';
+  go('s-dash');
+}
+
+// ── CHAT ──
+function openChat() {
+  document.getElementById('chat').classList.add('open');
+  document.getElementById('chat-in').focus();
+}
+function closeChat() {
+  document.getElementById('chat').classList.remove('open');
+}
+function send() {
+  const inp = document.getElementById('chat-in');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const box = document.getElementById('msgs');
+  const u = document.createElement('div');
+  u.className = 'msg u';
+  u.innerHTML = `<div class="bubble">${txt}</div>`;
+  box.appendChild(u);
+  inp.value = '';
+  box.scrollTop = box.scrollHeight;
+  setTimeout(() => {
+    const a = document.createElement('div');
+    a.className = 'msg a';
+    a.innerHTML = `<div class="msg-sender">Pulse</div><div class="bubble">Chen Group's $8,000 invoice is the main driver of your amber status. Sending a reminder today gives them until March 16th — if paid, your bar turns green. Want me to send it now?</div>`;
+    box.appendChild(a);
+    box.scrollTop = box.scrollHeight;
+  }, 800);
+}
+
+// ── CHECKLIST ──
+function tick(n) {
+  const cb = document.getElementById('cb' + n);
+  const card = document.getElementById('step' + n);
+  if (checked.has(n)) {
+    checked.delete(n);
+    cb.classList.remove('on');
+    cb.textContent = '';
+    card.classList.remove('checked');
+  } else {
+    checked.add(n);
+    cb.classList.add('on');
+    cb.textContent = '✓';
+    card.classList.add('checked');
+  }
+  const btn = document.getElementById('finish-btn');
+  btn.disabled = checked.size < 3;
+  btn.style.opacity = checked.size < 3 ? '.4' : '1';
+  btn.style.cursor = checked.size < 3 ? 'not-allowed' : 'pointer';
+}
+
+syncStatus();
+</script>
+</body>
+</html>

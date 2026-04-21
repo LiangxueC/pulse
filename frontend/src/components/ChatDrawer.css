@@ -1,0 +1,76 @@
+.pulse-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 900;
+  background: var(--qb-green); color: white; border-radius: 30px;
+  padding: 12px 20px; display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 600; border: none;
+  box-shadow: 0 4px 16px rgba(44,160,28,0.4); transition: all 0.2s; cursor: pointer;
+}
+.pulse-fab:hover { background: var(--qb-green-dark); transform: translateY(-1px); }
+.pulse-fab__dot { width: 28px; height: 28px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; }
+.pulse-fab__inner { width: 16px; height: 16px; border-radius: 50%; background: var(--qb-green); }
+
+/* Drawer */
+.chat-drawer {
+  position: fixed; bottom: 80px; right: 24px; z-index: 901;
+  width: 380px; background: white; border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: slideUpDrawer 0.2s ease;
+}
+
+.chat-drawer__header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+}
+.chat-drawer__pulse-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--qb-green); flex-shrink: 0; }
+.chat-drawer__header-info { flex: 1; }
+.chat-drawer__title { font-size: 15px; font-weight: 700; color: var(--gray-800); }
+.chat-drawer__close { background: none; border: none; color: var(--gray-400); font-size: 18px; line-height: 1; cursor: pointer; }
+
+.chat-drawer__messages {
+  flex: 1; padding: 16px; max-height: 260px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.chat-msg { max-width: 90%; }
+.chat-msg--user { align-self: flex-end; }
+.chat-msg--assistant { align-self: flex-start; }
+.chat-msg__bubble { padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.5; }
+.chat-msg--assistant .chat-msg__bubble { background: var(--gray-100); color: var(--gray-800); border-radius: 4px 16px 16px 16px; }
+.chat-msg--user .chat-msg__bubble { background: var(--gray-200); color: var(--gray-800); border-radius: 16px 16px 4px 16px; }
+
+.chat-msg__bubble--loading { display: flex; gap: 4px; align-items: center; padding: 12px 16px; }
+.chat-msg__bubble--loading span { width: 6px; height: 6px; border-radius: 50%; background: var(--gray-400); animation: bounce 1s infinite; }
+.chat-msg__bubble--loading span:nth-child(2) { animation-delay: 0.15s; }
+.chat-msg__bubble--loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+
+/* Chips */
+.chat-drawer__chips {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 14px 6px; border-top: 1px solid var(--gray-100);
+}
+.chat-drawer__chip {
+  padding: 5px 12px; border: 1px solid var(--gray-300);
+  border-radius: 20px; font-size: 12px; color: var(--gray-700);
+  background: white; cursor: pointer; transition: all 0.15s;
+  font-family: inherit; white-space: nowrap;
+}
+.chat-drawer__chip:hover { background: var(--gray-100); border-color: var(--gray-400); }
+
+.chat-drawer__input-row {
+  display: flex; gap: 8px; padding: 10px 16px;
+  border-top: 1px solid var(--gray-100); align-items: center;
+}
+.chat-drawer__attach { background: none; border: none; color: var(--gray-400); display: flex; align-items: center; cursor: pointer; }
+.chat-drawer__input { flex: 1; border: 1px solid var(--gray-200); border-radius: 20px; padding: 8px 14px; font-size: 13px; outline: none; font-family: inherit; }
+.chat-drawer__input:focus { border-color: var(--qb-green); }
+.chat-drawer__send { background: var(--qb-green); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
+.chat-drawer__send:disabled { opacity: 0.5; }
+
+.chat-drawer__disclaimer {
+  font-size: 11px; color: var(--gray-400); font-style: italic;
+  padding: 6px 16px 10px; text-align: center; line-height: 1.4;
+}
+
+@keyframes slideUpDrawer { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

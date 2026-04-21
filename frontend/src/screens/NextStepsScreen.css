@@ -1,0 +1,22 @@
+.ns { display: flex; flex-direction: column; gap: 16px; }
+.ns-loading { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 15px; color: var(--gray-400); }
+.ns__balance-card { display: flex; flex-direction: column; }
+.ns__balance-label { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+.ns__amount { font-size: 32px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; transition: filter 0.2s; }
+.ns__chart-card { display: flex; flex-direction: column; }
+.ns__toggle-row { display: flex; align-items: center; justify-content: flex-end; gap: 10px; font-size: 13px; color: var(--gray-600); }
+.ns__agent { display: flex; align-items: flex-start; gap: 14px; }
+.ns__agent-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--qb-green); flex-shrink: 0; }
+.ns__agent-text { font-size: 14px; color: var(--gray-700); line-height: 1.6; padding-top: 8px; }
+.ns__steps-card { padding: 0; }
+.ns__steps-title { padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100); }
+.ns__step { display: flex; align-items: flex-start; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background 0.15s; }
+.ns__step:last-child { border-bottom: none; }
+.ns__step:hover { background: var(--gray-50); }
+.ns__step-checkbox { width: 20px; height: 20px; border: 1.5px solid var(--gray-300); border-radius: 3px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.ns__step-checkbox--checked { background: var(--gray-800); border-color: var(--gray-800); }
+.ns__step-text { font-size: 13px; line-height: 1.6; color: var(--gray-700); }
+.ns__action-row { display: flex; align-items: center; justify-content: space-between; }
+.ns__next-btn { padding: 10px 32px; font-size: 14px; background: var(--gray-200); color: var(--gray-500); border: none; border-radius: 8px; cursor: not-allowed; }
+.ns__next-btn--active { background: var(--gray-800); color: white; cursor: pointer; }
+.ns__next-btn--active:hover { background: var(--gray-900); }

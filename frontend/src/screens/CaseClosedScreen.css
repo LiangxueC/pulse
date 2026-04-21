@@ -1,0 +1,19 @@
+.cc { display: flex; flex-direction: column; gap: 24px; }
+
+.cc__toggle-row {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px; font-size: 13px; color: var(--gray-600);
+}
+
+.cc__agent { display: flex; align-items: flex-start; gap: 14px; }
+.cc__agent-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--qb-green); flex-shrink: 0; }
+.cc__agent-text { font-size: 14px; color: var(--gray-700); line-height: 1.6; padding-top: 8px; }
+
+.cc__link {
+  background: none; border: none; color: var(--qb-teal);
+  text-decoration: underline; font-size: 14px; cursor: pointer; padding: 0;
+}
+
+.cc__back-btn {
+  padding: 12px 32px; font-size: 14px; align-self: flex-start;
+}

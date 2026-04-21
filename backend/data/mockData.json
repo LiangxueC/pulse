@@ -1,0 +1,180 @@
+{
+  "company": {
+    "id": "sample-co-7-8-25",
+    "name": "Sample Company-7-8-25",
+    "user": "Angela Chan"
+  },
+  "cashFlow": {
+    "projectedLowestBalance": 55000.0,
+    "status": "yellow",
+    "statusLabel": "Yellow (Needs attention)",
+    "issueCount": 2,
+    "projectedBalanceOverTime": [
+      { "day": 0,  "balance": 52000 },
+      { "day": 1,  "balance": 51500 },
+      { "day": 2,  "balance": 50000 },
+      { "day": 3,  "balance": 48000 },
+      { "day": 4,  "balance": 46500 },
+      { "day": 5,  "balance": 45200 },
+      { "day": 6,  "balance": 44800 },
+      { "day": 7,  "balance": 45500 },
+      { "day": 8,  "balance": 47000 },
+      { "day": 9,  "balance": 48200 },
+      { "day": 10, "balance": 47500 },
+      { "day": 11, "balance": 46000 },
+      { "day": 12, "balance": 44500 },
+      { "day": 13, "balance": 43200 },
+      { "day": 14, "balance": 42500 }
+    ],
+    "targetMinimumBuffer": 40000,
+    "safeZoneThreshold": 48000
+  },
+  "reasons": [
+    {
+      "id": "r1",
+      "text": "Chen Group owes you $8,000 and is 12 days late.",
+      "actionTaken": "keep monitoring",
+      "actionLabel": "Action taken: keep monitoring",
+      "actionType": "green"
+    },
+    {
+      "id": "r2",
+      "text": "5 underused software subscriptions are being paid for.",
+      "actionTaken": null,
+      "actionLabel": "Learn more",
+      "actionType": "gray",
+      "modalContent": {
+        "title": "HOW WOULD THIS IMPACT CASH FLOW?",
+        "body": [
+          "Canceling or pausing all except one would free up $180–300 of cash every month from the very next bill cycle.",
+          "Instead of bleeding cash on tools no one uses, you can either keep that cash in the bank (raising the projected lowest balance over the next 14–30 days) or redirect it toward growth-related costs (like ads or a key hire) without increasing the total burn."
+        ]
+      }
+    },
+    {
+      "id": "r3",
+      "text": "You're spending more on payroll than your revenue is growing.",
+      "actionTaken": null,
+      "actionLabel": "Learn more",
+      "actionType": "gray",
+      "modalContent": {
+        "title": "HOW WOULD THIS IMPACT CASH FLOW?",
+        "body": [
+          "Slowing down hiring and trimming hours where possible could save $500–1,200/month depending on your current headcount.",
+          "Tying future payroll increases to revenue growth ensures your burn rate stays proportional to income, keeping the projected balance in the safe zone over the next 30–60 days."
+        ]
+      }
+    }
+  ],
+  "suggestedNextSteps": [
+    {
+      "id": "s1",
+      "text": "Pick one main tool that's most beneficial, pause the others, and redirect that money into something that moves the business forward.",
+      "category": "subscriptions"
+    },
+    {
+      "id": "s2",
+      "text": "Slow down hiring, trim hours where possible, and make sure future payroll increases are tied to revenue growth.",
+      "category": "payroll"
+    }
+  ],
+  "outstandingInvoices": [
+    {
+      "id": "inv1",
+      "company": "The Chen Group",
+      "daysOverdue": 12,
+      "amount": 8000.0,
+      "status": "overdue"
+    },
+    {
+      "id": "inv2",
+      "company": "Electronic Arts",
+      "daysOverdue": 1,
+      "amount": 150.25,
+      "status": "overdue"
+    },
+    {
+      "id": "inv3",
+      "company": "Independent",
+      "daysOverdue": 7,
+      "amount": 320.75,
+      "status": "overdue"
+    }
+  ],
+  "upcomingBills": [
+    {
+      "id": "bill1",
+      "name": "Asana Monthly Subscription",
+      "dueDate": "2026-03-31",
+      "dueDateLabel": "Due March 31",
+      "amount": 65.0
+    },
+    {
+      "id": "bill2",
+      "name": "Office Rent",
+      "dueDate": "2026-04-01",
+      "dueDateLabel": "Due April 1",
+      "amount": 150.25
+    },
+    {
+      "id": "bill3",
+      "name": "Trello Monthly Subscription",
+      "dueDate": "2026-04-15",
+      "dueDateLabel": "Due April 15",
+      "amount": 130.0
+    }
+  ],
+  "archivedCases": [
+    {
+      "id": "case1",
+      "date": "2026-02-20",
+      "label": "2/20/26: Late invoice, underused subscriptions, payroll"
+    },
+    {
+      "id": "case2",
+      "date": "2026-01-15",
+      "label": "1/15/26: Inventory, vendor costs"
+    }
+  ],
+  "subscriptionRanking": [
+    { "id": "sub1", "name": "Asana",     "recommended": true  },
+    { "id": "sub2", "name": "Clickup",   "recommended": false },
+    { "id": "sub3", "name": "Notion",    "recommended": false },
+    { "id": "sub4", "name": "Mailchimp", "recommended": false },
+    { "id": "sub5", "name": "iStock",    "recommended": false }
+  ],
+  "cashRedirects": [
+    {
+      "id": "cr1",
+      "text": "Add the monthly savings directly into an emergency-like reserve."
+    },
+    {
+      "id": "cr2",
+      "text": "Redirect the money into the best-performing ad or content channels (e.g., paid search, targeted social ads, content creation) to accelerate sign-ups or sales."
+    },
+    {
+      "id": "cr3",
+      "text": "Use the savings to buy or build one productive tool (e.g., an automation that reduces manual work) that compounds savings over time, even if it costs something upfront."
+    }
+  ],
+  "redirectImpacts": {
+    "cr1": {
+      "redirectId": "cr1",
+      "description": "Keeping $100/month in reserve raises your projected lowest cash balance over the next 14 days by about $70, moving you further toward your target buffer.",
+      "monthlySaving": 100,
+      "balanceIncrease": 70
+    },
+    "cr2": {
+      "redirectId": "cr2",
+      "description": "Redirecting $100/month to ads could generate new revenue within 30–60 days, gradually improving your cash position if conversion rates hold.",
+      "monthlySaving": 100,
+      "balanceIncrease": 40
+    },
+    "cr3": {
+      "redirectId": "cr3",
+      "description": "Investing $100/month in a productivity tool may reduce manual hours and lower indirect costs over 60–90 days, providing a compounding effect on your cash buffer.",
+      "monthlySaving": 100,
+      "balanceIncrease": 25
+    }
+  }
+}

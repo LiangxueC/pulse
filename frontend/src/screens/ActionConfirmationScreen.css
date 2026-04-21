@@ -1,0 +1,140 @@
+.acf {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 760px;
+}
+
+.acf__agent {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.acf__agent-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--qb-green);
+  flex-shrink: 0;
+}
+
+.acf__agent-text {
+  font-size: 14px;
+  color: var(--gray-700);
+  line-height: 1.6;
+  padding-top: 8px;
+}
+
+/* Result card */
+.acf__result-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+}
+
+.acf__result-summary {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray-800);
+}
+
+.acf__result-bullets {
+  list-style: disc;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acf__result-bullets li {
+  font-size: 14px;
+  color: var(--gray-800);
+}
+
+.acf__result-impact {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray-800);
+}
+
+/* Bottom action row */
+.acf__action-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.acf__done-btn {
+  padding: 12px 32px;
+  font-size: 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.acf__feedback-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--gray-300);
+  border-radius: 24px;
+  padding: 8px 8px 8px 16px;
+  gap: 8px;
+  background: white;
+}
+
+.acf__feedback-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--gray-700);
+  font-family: inherit;
+  background: transparent;
+}
+
+.acf__feedback-input::placeholder {
+  color: var(--gray-400);
+}
+
+.acf__feedback-send {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-600);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.acf__feedback-send:not(:disabled) {
+  background: var(--gray-800);
+  color: white;
+}
+
+.acf__feedback-send:disabled {
+  cursor: not-allowed;
+}
+
+.acf__feedback-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.acf__feedback-reply-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gray-700);
+}
