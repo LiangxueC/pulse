@@ -4,9 +4,10 @@ export type Screen =
   | "nextSteps"
   | "actionChoice"
   | "archived"
+  | "caseDetail"
   | "doItMyself"
   | "takeAction"
-  | "actionConfirmation"   // NEW
+  | "actionConfirmation"
   | "cashRedirects"
   | "redirectImpact"
   | "closingReview"

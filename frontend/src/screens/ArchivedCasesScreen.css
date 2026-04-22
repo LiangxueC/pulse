@@ -20,3 +20,13 @@
 .arch__item:hover .arch__item-del { opacity: 1; }
 .arch__item-del:hover { color: var(--red-alert); }
 .arch__empty { text-align: center; padding: 40px; color: var(--gray-400); font-size: 14px; }
+.arch__item-label--clickable {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--gray-300);
+  text-underline-offset: 2px;
+}
+.arch__item-label--clickable:hover {
+  color: var(--qb-teal);
+  text-decoration-color: var(--qb-teal);
+}

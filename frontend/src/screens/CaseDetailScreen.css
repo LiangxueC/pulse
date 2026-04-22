@@ -1,0 +1,80 @@
+.cd { display: flex; flex-direction: column; gap: 24px; max-width: 900px; }
+
+.cd__title { font-size: 26px; font-weight: 700; color: var(--gray-800); }
+.cd__date { font-size: 13px; color: var(--gray-400); margin-top: -16px; }
+
+.cd__tabs { display: flex; border-bottom: 1px solid var(--gray-200); }
+.cd__tab {
+  padding: 12px 20px; font-size: 14px; font-weight: 500;
+  background: none; border: none; color: var(--gray-400);
+  border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s;
+}
+.cd__tab:hover { color: var(--gray-700); }
+.cd__tab--active { color: var(--gray-800); border-bottom-color: var(--gray-800); font-weight: 600; }
+
+.cd__agent { display: flex; align-items: flex-start; gap: 14px; }
+.cd__agent-text {
+  font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  display: flex; flex-direction: column; gap: 6px; padding-top: 4px;
+}
+
+.cd__card { padding: 0; }
+.cd__card-title { padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100); }
+
+/* Steps */
+.cd__step-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--gray-100);
+}
+.cd__step-row:last-child { border-bottom: none; }
+.cd__step-text { font-size: 13px; color: var(--gray-700); flex: 1; line-height: 1.5; }
+.cd__step-check {
+  width: 20px; height: 20px; border: 1.5px solid var(--gray-300);
+  border-radius: 3px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cd__step-check--checked { background: var(--gray-800); border-color: var(--gray-800); }
+
+/* Ranking */
+.cd__ranking-card { padding: 0; }
+.cd__ranking-row {
+  padding: 14px 20px; font-size: 14px; text-align: center;
+  border-bottom: 1px solid var(--gray-100);
+}
+.cd__ranking-row:last-child { border-bottom: none; }
+.cd__ranking-row--keep { font-weight: 700; color: var(--gray-800); background: white; }
+.cd__ranking-row--pause { color: var(--gray-600); background: var(--gray-100); }
+
+/* Redirects */
+.cd__redirect-card { padding: 0; }
+.cd__redirect-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--gray-100);
+}
+.cd__redirect-row:last-child { border-bottom: none; }
+.cd__redirect-text { font-size: 13px; line-height: 1.6; color: var(--gray-700); flex: 1; }
+.cd__redirect-check {
+  width: 20px; height: 20px; border: 1.5px solid var(--gray-300);
+  border-radius: 3px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cd__redirect-check--checked { background: var(--gray-800); border-color: var(--gray-800); }
+
+/* Impact */
+.cd__impact-card { padding: 0; }
+.cd__charts {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; padding: 16px 20px;
+}
+.cd__chart-col { display: flex; flex-direction: column; gap: 8px; }
+.cd__chart-wrap { position: relative; height: 180px; }
+.cd__chart-label {
+  font-size: 13px; font-weight: 600; text-align: center; color: var(--gray-800);
+}
+.cd__impact-desc {
+  font-size: 13px; line-height: 1.6; color: var(--gray-700); padding: 0 20px 16px;
+}
+
+.cd__disclaimer {
+  font-size: 12px; color: var(--gray-400); font-style: italic; text-align: center;
+}

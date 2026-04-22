@@ -85,9 +85,7 @@ export const ChatDrawer: React.FC<ChatDrawerProps> = ({
     <>
       {/* FAB */}
       <button className="pulse-fab" onClick={handleOpen}>
-        <div className="pulse-fab__dot">
-          <div className="pulse-fab__inner" />
-        </div>
+        <img src="/pulse-logo.png" alt="Pulse" className="pulse-fab__logo" />
         Chat with Pulse
       </button>
 
@@ -99,7 +97,7 @@ export const ChatDrawer: React.FC<ChatDrawerProps> = ({
           onClick={resetInactivityTimer}
         >
           <div className="chat-drawer__header">
-            <div className="chat-drawer__pulse-dot" />
+            <img src="/pulse-logo.png" alt="Pulse" className="chat-drawer__pulse-logo" />
             <div className="chat-drawer__header-info">
               <span className="chat-drawer__title">Pulse</span>
             </div>
