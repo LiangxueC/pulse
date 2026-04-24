@@ -39,16 +39,16 @@ const CASE_DETAILS: Record<string, {
       { day: 3, balance: 48000 }, { day: 4, balance: 46500 }, { day: 5, balance: 45200 },
       { day: 6, balance: 44800 }, { day: 7, balance: 45500 }, { day: 8, balance: 47000 },
       { day: 9, balance: 48200 }, { day: 10, balance: 47500 }, { day: 11, balance: 46000 },
-      { day: 12, balance: 44500 }, { day: 13, balance: 43200 }, { day: 14, balance: 42500 },
+      { day: 12, balance: 44500 }, { day: 13, balance: 43200 }, { day: 30, balance: 42500 },
     ],
     newData: [
       { day: 0, balance: 52000 }, { day: 1, balance: 51800 }, { day: 2, balance: 51000 },
       { day: 3, balance: 49200 }, { day: 4, balance: 48000 }, { day: 5, balance: 47100 },
       { day: 6, balance: 46700 }, { day: 7, balance: 47400 }, { day: 8, balance: 48700 },
       { day: 9, balance: 49800 }, { day: 10, balance: 49200 }, { day: 11, balance: 47800 },
-      { day: 12, balance: 46200 }, { day: 13, balance: 45000 }, { day: 14, balance: 43200 },
+      { day: 12, balance: 46200 }, { day: 13, balance: 45000 }, { day: 30, balance: 43200 },
     ],
-    impactDesc: "Keeping $100/month in reserve raises your projected lowest cash balance over the next 14 days by about $70, moving you further toward your target buffer.",
+    impactDesc: "Keeping $100/month in reserve raises your projected lowest cash balance over the next 30 days by about $70, moving you further toward your target buffer.",
   }
 };
 
@@ -129,7 +129,7 @@ export const CaseDetailScreen: React.FC<Props> = ({ caseData, onNavigate }) => {
         <PulseAvatar />
         <div className="cd__agent-text">
           <p>Here are some suggestions for how you can redirect the money you save.</p>
-          <p><strong>Click on one or multiple to see how that would affect your projected lowest cash balance over the next 14 days.</strong></p>
+          <p><strong>Click on one or multiple to see how that would affect your projected lowest cash balance over the next 30 days.</strong></p>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export const CaseDetailScreen: React.FC<Props> = ({ caseData, onNavigate }) => {
         <PulseAvatar />
         <div className="cd__agent-text">
           <p>I see you've chosen to "{detail.redirectChosen}"</p>
-          <p><strong>I've outlined how this move would benefit your projected lowest cash balance over the next 14 days.</strong></p>
+          <p><strong>I've outlined how this move would benefit your projected lowest cash balance over the next 30 days.</strong></p>
         </div>
       </div>
 

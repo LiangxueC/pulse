@@ -21,25 +21,21 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-// ── Dashboard ──
-export const fetchDashboard = () =>
-  request<DashboardResponse>("/api/dashboard/");
+export const fetchDashboard = (completedCategories: string[] = []) => {
+  const params = completedCategories.map(c => `completed=${c}`).join("&");
+  return request<DashboardResponse>(`/api/dashboard/${params ? `?${params}` : ""}`);
+};
 
-// ── Cash Flow ──
-export const fetchCashFlowDetail = () =>
-  request<CashFlowDetailResponse>("/api/cashflow/detail");
-
-export const fetchReasonExplanation = (reasonId: string) =>
-  request<{ reasonId: string; explanation: string }>(
-    `/api/cashflow/reasons/${reasonId}/explain`
-  );
+export const fetchCashFlowDetail = (completedCategories: string[] = []) => {
+  const params = completedCategories.map(c => `completed=${c}`).join("&");
+  return request<CashFlowDetailResponse>(`/api/cashflow/detail${params ? `?${params}` : ""}`);
+};
 
 export const fetchStepExplanation = (stepId: string) =>
   request<{ stepId: string; explanation: string }>(
     `/api/cashflow/steps/${stepId}/explain`
   );
 
-// ── Invoices ──
 export const fetchInvoices = () =>
   request<InvoicesResponse>("/api/invoices/");
 
@@ -49,7 +45,6 @@ export const sendReminders = () =>
     { method: "POST" }
   );
 
-// ── Bills ──
 export const fetchBills = () =>
   request<BillsResponse>("/api/bills/");
 
@@ -59,7 +54,6 @@ export const payAllBills = () =>
     { method: "POST" }
   );
 
-// ── Archived Cases ──
 export const fetchArchivedCases = (search = "") =>
   request<{ items: ArchivedCase[] }>(
     `/api/cases/${search ? `?search=${encodeURIComponent(search)}` : ""}`
@@ -80,7 +74,6 @@ export const closeCase = (stepsTaken: object[], stepsSkipped: object[]) =>
     body: JSON.stringify({ stepsTaken, stepsSkipped }),
   });
 
-// ── Chat ──
 export const sendChatMessage = (messages: ChatMessage[]) =>
   request<{ reply: string }>("/api/chat/", {
     method: "POST",
@@ -97,7 +90,6 @@ export const sendActionFeedback = (
     body: JSON.stringify({ feedback, category, currentResult }),
   });
 
-// ── Actions ──
 export const fetchSubscriptionRanking = () =>
   request<{ subscriptions: Subscription[] }>("/api/actions/subscriptions");
 
@@ -119,3 +111,6 @@ export const executeAction = (category: string, stepText: string) =>
     method: "POST",
     body: JSON.stringify({ category, stepText }),
   });
+
+export const fetchPayrollSummary = () =>
+  request<{ summary: string }>("/api/actions/payroll-summary");

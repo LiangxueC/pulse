@@ -6,8 +6,10 @@
 }
 
 .crev__agent { display: flex; align-items: flex-start; gap: 14px; }
-.crev__agent-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--qb-green); flex-shrink: 0; }
-.crev__agent-text { font-size: 14px; color: var(--gray-700); line-height: 1.6; display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+.crev__agent-text {
+  font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  display: flex; flex-direction: column; gap: 8px; padding-top: 4px;
+}
 
 .crev__card { padding: 0; }
 .crev__card-title { padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100); }
@@ -19,6 +21,7 @@
 }
 .crev__item:last-child { border-bottom: none; }
 .crev__item:hover { background: var(--gray-50); }
+.crev__item--selected { background: #f0fdf4; }
 
 .crev__item-text { font-size: 13px; line-height: 1.6; color: var(--gray-700); flex: 1; }
 
@@ -29,7 +32,52 @@
 }
 .crev__checkbox--checked { background: var(--gray-800); border-color: var(--gray-800); }
 
-.crev__action-row { display: flex; align-items: center; justify-content: space-between; }
+/* Follow-up question */
+.crev__followup {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #f0fdf4;
+  border: 1px solid #c8e6c9;
+  border-radius: 10px;
+  padding: 16px 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.crev__followup-text {
+  font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  display: flex; flex-direction: column; gap: 6px; padding-top: 2px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Action row */
+.crev__action-row {
+  display: flex; align-items: center; justify-content: space-between;
+}
+
 .crev__btns { display: flex; gap: 10px; }
-.crev__btn { padding: 10px 20px; font-size: 14px; border-radius: 8px; }
-.crev__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.crev__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; font-size: 14px; font-weight: 600;
+  border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+
+.crev__btn--outline {
+  background: white; color: var(--gray-700); border: 1.5px solid var(--gray-300);
+}
+.crev__btn--outline:hover { border-color: var(--gray-600); color: var(--gray-900); }
+.crev__btn--outline:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.crev__btn--green {
+  background: var(--qb-green); color: white; border: none;
+}
+.crev__btn--green:hover { background: var(--qb-green-dark); }
+
+.crev__disclaimer {
+  font-size: 12px; color: var(--gray-400); font-style: italic; text-align: center;
+}

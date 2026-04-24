@@ -19,7 +19,7 @@ def _build_system_prompt() -> str:
 You help small business owners understand their cash flow health and take action.
 
 Current financial context:
-- Projected lowest cash balance (next 14 days): ${cf['projectedLowestBalance']:,.2f}
+- Projected lowest cash balance (next 30 days): ${cf['projectedLowestBalance']:,.2f}
 - Status: {cf['statusLabel']}
 - Target minimum buffer: ${cf['targetMinimumBuffer']:,.2f}
 
@@ -56,22 +56,13 @@ async def chat_with_pulse(messages: list[dict]) -> str:
         return f"Sorry, I couldn't connect right now. Error: {str(e)}"
 
 
-async def explain_reason(reason_text: str) -> str:
-    return await chat_with_pulse([{
-        "role": "user",
-        "content": (
-            f"Explain how this issue impacts my cash flow and what I can do about it:\n\n"
-            f"{reason_text}\n\nKeep it to 2-3 short paragraphs."
-        ),
-    }])
-
-
 async def explain_step(step_text: str) -> str:
+    """Gemini explains why a suggested step helps cash flow."""
     return await chat_with_pulse([{
         "role": "user",
         "content": (
             f"Explain why this next step would help my cash flow and how to act on it:\n\n"
-            f"{step_text}\n\nKeep it to 2-3 short paragraphs."
+            f"{step_text}\n\nKeep it to 2-3 short paragraphs. Be specific and practical."
         ),
     }])
 
@@ -81,15 +72,10 @@ async def explain_action_feedback(
     category: str,
     current_result: dict,
 ) -> str:
-    """
-    User asked to change something about the completed action.
-    Give a revised recommendation based on their feedback.
-    """
     summary = current_result.get("summary", "")
     bullets = "\n".join(f"- {b}" for b in current_result.get("bullets", []))
     impact = current_result.get("impact", "")
-
-    prompt = f"""The user just reviewed an action I took on their behalf and wants a change.
+    prompt = f"""The user just reviewed an action I took and wants a change.
 
 What I did ({category}):
 {summary}
@@ -99,7 +85,20 @@ Impact: {impact}
 
 User feedback: "{feedback}"
 
-Acknowledge their feedback, explain what you would change and why, 
-and give a revised recommendation in 2-3 sentences. Be direct and actionable."""
-
+Acknowledge their feedback, explain what you would change and why,
+and give a revised recommendation in 2-3 sentences."""
     return await chat_with_pulse([{"role": "user", "content": prompt}])
+
+
+async def generate_payroll_summary() -> str:
+    """Generate a Pulse summary for the payroll case — no redirects needed."""
+    return await chat_with_pulse([{
+        "role": "user",
+        "content": (
+            "The user has chosen to slow down hiring, trim hours where possible, "
+            "and tie future payroll increases to revenue growth. "
+            "Give a brief, encouraging summary (3-4 sentences) of what this means "
+            "for their cash flow over the next 14-30 days. Be specific and practical. "
+            "End with one concrete first action they can take today."
+        ),
+    }])

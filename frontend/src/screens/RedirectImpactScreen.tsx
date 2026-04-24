@@ -78,7 +78,7 @@ export const RedirectImpactScreen: React.FC<Props> = ({
           <p>
             <strong>
               I've outlined how this move would benefit your projected lowest
-              cash balance over the next 14 days.
+              cash balance over the next 30 days.
             </strong>
           </p>
         </div>

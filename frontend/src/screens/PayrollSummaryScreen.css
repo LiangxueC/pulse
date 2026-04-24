@@ -1,0 +1,44 @@
+.ps { display: flex; flex-direction: column; gap: 20px; }
+
+.ps__toggle-row {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px; font-size: 13px; color: var(--gray-600);
+}
+
+.ps__agent { display: flex; align-items: flex-start; gap: 14px; }
+.ps__agent-text {
+  font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  display: flex; flex-direction: column; gap: 6px; padding-top: 4px;
+}
+
+.ps__summary-card {
+  padding: 24px;
+}
+
+.ps__summary-text {
+  font-size: 14px; line-height: 1.8; color: var(--gray-700);
+}
+
+.ps__finish-hint {
+  font-size: 14px; font-weight: 600; color: var(--gray-800);
+}
+
+.ps__action-row {
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.ps__done-btn {
+  padding: 11px 32px;
+  font-size: 14px; font-weight: 600;
+  background: var(--qb-green); color: white;
+  border: none; border-radius: 8px;
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.ps__done-btn:hover { background: var(--qb-green-dark); }
+.ps__done-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.ps__disclaimer {
+  font-size: 12px; color: var(--gray-400);
+  font-style: italic; text-align: center;
+}

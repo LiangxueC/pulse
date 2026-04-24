@@ -96,7 +96,7 @@
   "redirectImpacts": {
     "cr1": {
       "redirectId": "cr1",
-      "description": "Keeping $100/month in reserve raises your projected lowest cash balance over the next 14 days by about $70.",
+      "description": "Keeping $100/month in reserve raises your projected lowest cash balance over the next 30 days by about $70.",
       "monthlySaving": 100,
       "balanceIncrease": 70
     },

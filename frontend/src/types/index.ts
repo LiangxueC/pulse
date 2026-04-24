@@ -7,6 +7,7 @@ export type Screen =
   | "caseDetail"
   | "doItMyself"
   | "takeAction"
+  | "payrollSummary"
   | "actionConfirmation"
   | "cashRedirects"
   | "redirectImpact"

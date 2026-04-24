@@ -4,10 +4,17 @@ import { fetchDashboard, sendReminders, payAllBills } from "../data/api";
 import { DashboardSkeleton } from "../components/LoadingSkeleton";
 import { ErrorCard, EmptyState } from "../components/ErrorCard";
 import "./DashboardScreen.css";
+import { PulseAvatar } from "../components/PulseAvatar";
 
-interface Props { onNavigate: (s: Screen) => void; }
+interface Props {
+  onNavigate: (s: Screen) => void;
+  completedCategories?: string[];
+}
 
-export const DashboardScreen: React.FC<Props> = ({ onNavigate }) => {
+export const DashboardScreen: React.FC<Props> = ({
+  onNavigate,
+  completedCategories = [],
+}) => {
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -17,11 +24,11 @@ export const DashboardScreen: React.FC<Props> = ({ onNavigate }) => {
   const load = useCallback(() => {
     setLoading(true);
     setError("");
-    fetchDashboard()
+    fetchDashboard(completedCategories)
       .then(setData)
       .catch(() => setError("Failed to load dashboard data. Is the backend running?"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [completedCategories.join(",")]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -37,7 +44,7 @@ export const DashboardScreen: React.FC<Props> = ({ onNavigate }) => {
   const { company, cashFlow, outstandingInvoices, upcomingBills } = data;
 
   // Health bar: green=100%, yellow=40%, red=10%
-  const healthPct = cashFlow.status === "green" ? 100
+  const healthPct = cashFlow.status === "green" ? 60
     : cashFlow.status === "yellow" ? 40 : 10;
   const healthColor = cashFlow.status === "green" ? "#2CA01C"
     : cashFlow.status === "yellow" ? "#F4B000" : "#DC2626";
@@ -61,12 +68,11 @@ export const DashboardScreen: React.FC<Props> = ({ onNavigate }) => {
       <div className="pulse-banner">
         <div className="pulse-banner__header" onClick={() => setExpanded(e => !e)}>
           <div className="pulse-banner__left">
-            <div className="pulse-banner__dot" />
+            <PulseAvatar size={40} />
             <div>
               <div className="pulse-banner__title">Your cash flow assistant Pulse</div>
               <div className="pulse-banner__subtitle">
-                Click the dropdown to see Pulse's analysis of your cash flow situation
-                over the next 2 weeks and how you can resolve any issues Pulse noticed.
+                See Pulse's analysis of your cash flow situation and how you can resolve any issues Pluse noticed. 
               </div>
             </div>
           </div>
@@ -90,7 +96,7 @@ export const DashboardScreen: React.FC<Props> = ({ onNavigate }) => {
               {/* Cash Balance Panel */}
               <div className="pulse-panel">
                 <div className="pulse-panel__label">
-                  Projected lowest cash balance (14 days)
+                  Projected lowest cash balance (30 days)
                 </div>
                 <div className="pulse-panel__amount">
                   {cashFlow.projectedLowestBalance.toLocaleString("en-US", {

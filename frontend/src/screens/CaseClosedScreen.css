@@ -1,4 +1,4 @@
-.cc { display: flex; flex-direction: column; gap: 24px; }
+.cc { display: flex; flex-direction: column; gap: 20px; }
 
 .cc__toggle-row {
   display: flex; align-items: center; justify-content: flex-end;
@@ -6,14 +6,61 @@
 }
 
 .cc__agent { display: flex; align-items: flex-start; gap: 14px; }
-.cc__agent-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--qb-green); flex-shrink: 0; }
-.cc__agent-text { font-size: 14px; color: var(--gray-700); line-height: 1.6; padding-top: 8px; }
+.cc__agent-text {
+  font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  display: flex; flex-direction: column; gap: 6px; padding-top: 4px;
+}
 
 .cc__link {
   background: none; border: none; color: var(--qb-teal);
   text-decoration: underline; font-size: 14px; cursor: pointer; padding: 0;
 }
 
-.cc__back-btn {
-  padding: 12px 32px; font-size: 14px; align-self: flex-start;
+.cc__steps-card { padding: 0; }
+.cc__steps-title { padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100); }
+
+.cc__step-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--gray-100);
+  cursor: pointer; transition: background 0.15s;
+}
+.cc__step-row:last-child { border-bottom: none; }
+.cc__step-row:hover { background: var(--gray-50); }
+.cc__step-row--selected { background: #f0fdf4; }
+
+.cc__step-text { font-size: 13px; line-height: 1.6; color: var(--gray-700); flex: 1; }
+
+.cc__step-check {
+  width: 20px; height: 20px; border: 1.5px solid var(--gray-300);
+  border-radius: 3px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.cc__step-check--checked { background: var(--gray-800); border-color: var(--gray-800); }
+
+.cc__action-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+
+.cc__btns { display: flex; gap: 10px; }
+
+.cc__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; font-size: 14px; font-weight: 600;
+  border-radius: 8px; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+
+.cc__btn--green { background: var(--qb-green); color: white; border: none; }
+.cc__btn--green:hover { background: var(--qb-green-dark); }
+.cc__btn--green:disabled { opacity: 0.4; cursor: not-allowed; }
+.cc__btn--green:disabled:hover { background: var(--qb-green); }
+
+.cc__solo-btn { align-self: flex-start; }
+
+.cc__loading {
+  font-size: 13px; color: var(--gray-400); text-align: center; padding: 16px 0;
+}
+
+.cc__disclaimer {
+  font-size: 12px; color: var(--gray-400); font-style: italic; text-align: center;
 }

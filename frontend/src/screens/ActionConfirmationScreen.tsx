@@ -4,6 +4,7 @@ import { executeAction, sendActionFeedback } from "../data/api";
 import { Skeleton } from "../components/LoadingSkeleton";
 import { ErrorCard } from "../components/ErrorCard";
 import "./ActionConfirmationScreen.css";
+import { PulseAvatar } from "../components/PulseAvatar";
 
 interface Props {
   selectedSteps: SuggestedStep[];
@@ -93,7 +94,7 @@ export const ActionConfirmationScreen: React.FC<Props> = ({
     <div className="acf">
       {/* Pulse agent */}
       <div className="acf__agent">
-        <div className="acf__agent-dot" />
+        <PulseAvatar size={40} />
         <p className="acf__agent-text">
           I've completed the action! Please review and let me know if this
           issue is done:
@@ -144,10 +145,7 @@ export const ActionConfirmationScreen: React.FC<Props> = ({
       {/* Feedback reply from Pulse */}
       {feedbackReply && (
         <div className="acf__feedback-reply">
-          <div
-            className="acf__agent-dot"
-            style={{ width: 28, height: 28, flexShrink: 0 }}
-          />
+          <PulseAvatar size={28} />
           <p className="acf__feedback-reply-text">{feedbackReply}</p>
         </div>
       )}

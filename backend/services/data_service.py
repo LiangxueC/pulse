@@ -17,7 +17,6 @@ def get_company():
 
 
 def get_raw_cash_flow():
-    """Returns the raw cash flow data from mock — no computed fields."""
     return _mock["cashFlow"]
 
 
@@ -33,31 +32,24 @@ def get_archived_cases():
     return list(_mock["archivedCases"])
 
 
-# ── 1. Compute status from real balance numbers ──
 def compute_status(balance: float, target_buffer: float, safe_zone: float) -> dict:
     if balance >= safe_zone:
-        return {
-            "status": "green",
-            "statusLabel": "Green (Healthy)",
-        }
+        return {"status": "green", "statusLabel": "Green (Healthy)"}
     elif balance >= target_buffer:
-        return {
-            "status": "yellow",
-            "statusLabel": "Yellow (Needs attention)",
-        }
+        return {"status": "yellow", "statusLabel": "Yellow (Needs attention)"}
     else:
-        return {
-            "status": "red",
-            "statusLabel": "Red (Critical)",
-        }
+        return {"status": "red", "statusLabel": "Red (Critical)"}
 
 
-# ── 2 & 3. Compute reasons AND steps together ──
-def compute_reasons_and_steps() -> tuple[list, list]:
+def compute_reasons_and_steps(completed_categories: list[str] = []) -> tuple[list, list]:
+    """
+    completed_categories: list of category strings already actioned this session
+    e.g. ["subscriptions"] means subscription step is done, skip it
+    """
     reasons = []
     steps = []
 
-    # ── Check overdue invoices ──
+    # ── Overdue invoice reason (keep on reason card, no step) ──
     invoices = _mock.get("outstandingInvoices", [])
     overdue = [i for i in invoices if i.get("daysOverdue", 0) > 0]
     if overdue:
@@ -69,27 +61,20 @@ def compute_reasons_and_steps() -> tuple[list, list]:
             "actionLabel": "Action taken: keep monitoring",
             "actionType": "green",
         })
-        # No step for this one — already being monitored
+        # No step generated for invoices
 
-    # ── Check underused subscriptions ──
+    # ── Subscription reason + step ──
     subs = _mock.get("subscriptionRanking", [])
     pauseable = [s for s in subs if not s.get("recommended", False)]
-    if pauseable:
+    if pauseable and "subscriptions" not in completed_categories:
         names = ", ".join(s["name"] for s in pauseable[:3])
         est_monthly = len(pauseable) * 45
         reasons.append({
             "id": "r2",
             "text": f"{len(pauseable)} underused software subscriptions are being paid for.",
             "actionTaken": None,
-            "actionLabel": "Learn more",
+            "actionLabel": None,
             "actionType": "gray",
-            "modalContent": {
-                "title": "HOW WOULD THIS IMPACT CASH FLOW?",
-                "body": [
-                    f"Canceling or pausing {names} would free up an estimated ${est_monthly}/month from the very next bill cycle.",
-                    "You can keep that cash in the bank to raise your projected lowest balance, or redirect it toward growth without increasing total burn."
-                ]
-            }
         })
         steps.append({
             "id": "s1",
@@ -97,27 +82,20 @@ def compute_reasons_and_steps() -> tuple[list, list]:
             "category": "subscriptions",
         })
 
-    # ── Check payroll vs revenue (balance proximity to buffer) ──
+    # ── Payroll reason + step ──
     cf = _mock["cashFlow"]
     balance = cf["projectedLowestBalance"]
     target = cf["targetMinimumBuffer"]
     safe = cf["safeZoneThreshold"]
     buffer_gap = balance - target
 
-    if buffer_gap < 5000:
+    if buffer_gap < 5000 and "payroll" not in completed_categories:
         reasons.append({
             "id": "r3",
             "text": "You're spending more on payroll than your revenue is growing.",
             "actionTaken": None,
-            "actionLabel": "Learn more",
+            "actionLabel": None,
             "actionType": "gray",
-            "modalContent": {
-                "title": "HOW WOULD THIS IMPACT CASH FLOW?",
-                "body": [
-                    f"Your projected lowest balance is ${balance:,.0f}, only ${buffer_gap:,.0f} above your ${target:,.0f} target buffer.",
-                    "Slowing hiring and trimming hours could save $500–1,200/month and keep your burn rate proportional to income."
-                ]
-            }
         })
         steps.append({
             "id": "s2",
@@ -125,63 +103,45 @@ def compute_reasons_and_steps() -> tuple[list, list]:
             "category": "payroll",
         })
 
-    # ── Check upcoming bills spike ──
-    bills = _mock.get("upcomingBills", [])
-    total_bills = sum(b["amount"] for b in bills)
-    if total_bills > 300:
-        reasons.append({
-            "id": "r4",
-            "text": f"You have ${total_bills:,.0f} in upcoming bills due in the next 30 days.",
-            "actionTaken": None,
-            "actionLabel": "Learn more",
-            "actionType": "gray",
-            "modalContent": {
-                "title": "HOW WOULD THIS IMPACT CASH FLOW?",
-                "body": [
-                    f"${total_bills:,.0f} in bills are due soon. Make sure your current balance covers these without dipping below your target buffer.",
-                    "Consider collecting on overdue invoices before these bills come due."
-                ]
-            }
-        })
-        # Only add a step if not already covered
-        step_ids = [s["id"] for s in steps]
-        if "s3" not in step_ids:
-            steps.append({
-                "id": "s3",
-                "text": f"Collect on overdue invoices before ${total_bills:,.0f} in upcoming bills hit. Send reminders to {', '.join(i['company'] for i in overdue[:2]) if overdue else 'clients'}.",
-                "category": "invoices",
-            })
-
     return reasons, steps
 
 
-# ── Public getters used by routes ──
-def get_reasons() -> list:
-    reasons, _ = compute_reasons_and_steps()
+def get_reasons(completed_categories: list[str] = []) -> list:
+    reasons, _ = compute_reasons_and_steps(completed_categories)
     return reasons
 
 
-def get_suggested_steps() -> list:
-    _, steps = compute_reasons_and_steps()
+def get_suggested_steps(completed_categories: list[str] = []) -> list:
+    _, steps = compute_reasons_and_steps(completed_categories)
     return steps
 
 
-# ── 1+2: Full computed cash flow summary ──
-def get_cash_flow() -> dict:
+def compute_projected_balance(completed_categories: list[str] = []) -> float:
+    """
+    Compute balance improvement when steps are completed.
+    subscriptions: saves ~$180/month → ~$126 improvement on 30-day floor
+    payroll: saves ~$1200/month → ~$720 improvement on 30-day floor
+    """
+    base = _mock["cashFlow"]["projectedLowestBalance"]
+    improvement = 0.0
+    if "subscriptions" in completed_categories:
+        improvement += 126
+    if "payroll" in completed_categories:
+        improvement += 720
+    return base + improvement
+
+
+def get_cash_flow(completed_categories: list[str] = []) -> dict:
     raw = _mock["cashFlow"]
-    balance = raw["projectedLowestBalance"]
+    balance = compute_projected_balance(completed_categories)
     target = raw["targetMinimumBuffer"]
     safe = raw["safeZoneThreshold"]
-
-    # Compute status from real numbers
     status_info = compute_status(balance, target, safe)
-
-    # Issue count = number of computed reasons
-    reasons, _ = compute_reasons_and_steps()
+    reasons, _ = compute_reasons_and_steps(completed_categories)
     issue_count = len([r for r in reasons if r["actionType"] == "gray"])
-
     return {
         **raw,
+        "projectedLowestBalance": balance,
         "status": status_info["status"],
         "statusLabel": status_info["statusLabel"],
         "issueCount": issue_count,

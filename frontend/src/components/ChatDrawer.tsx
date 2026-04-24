@@ -111,7 +111,7 @@ export const ChatDrawer: React.FC<ChatDrawerProps> = ({
                 <strong>Hi {userName}!</strong>
                 <br />
                 {issueCount > 0
-                  ? `My review of your cash situation over the next 2 weeks found ${issueCount} issue${issueCount !== 1 ? "s" : ""}. Please take a look at your projected lowest cash balance as soon as you can.`
+                  ? `My review of your cash situation over the next 30 days found ${issueCount} issue${issueCount !== 1 ? "s" : ""}. Please take a look at your projected lowest cash balance as soon as you can.`
                   : "Your cash flow looks healthy right now. Let me know if you have any questions!"}
               </div>
             </div>

@@ -72,7 +72,7 @@ export const CashRedirectsScreen: React.FC<Props> = ({
           <p>
             <strong>
               Click on one or multiple to see how that would affect your
-              projected lowest cash balance over the next 14 days.
+              projected lowest cash balance over the next 30 days.
             </strong>
           </p>
         </div>

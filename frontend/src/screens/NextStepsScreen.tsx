@@ -3,6 +3,7 @@ import type { Screen, CashFlowDetailResponse, SuggestedStep } from "../types";
 import { fetchCashFlowDetail } from "../data/api";
 import { CashFlowChart } from "../components/CashFlowChart";
 import "./NextStepsScreen.css";
+import { PulseAvatar } from "../components/PulseAvatar";
 
 interface Props {
   onNavigate: (s: Screen) => void;
@@ -48,7 +49,7 @@ export const NextStepsScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }
           </div>
         </div>
         <div className="card ns__chart-card">
-          <div className="section-title" style={{ marginBottom: 12 }}>PROJECTED CASH BALANCE OVER NEXT 14 DAYS</div>
+          <div className="section-title" style={{ marginBottom: 12 }}>PROJECTED CASH BALANCE OVER NEXT 30 DAYS</div>
           <div style={{ position: "relative", height: 160 }}>
             <CashFlowChart data={cashFlow.projectedBalanceOverTime} targetMinimumBuffer={cashFlow.targetMinimumBuffer} safeZoneThreshold={cashFlow.safeZoneThreshold} />
           </div>
@@ -64,7 +65,7 @@ export const NextStepsScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }
       </div>
 
       <div className="ns__agent">
-        <div className="ns__agent-dot" />
+        <PulseAvatar size={40} />
         <p className="ns__agent-text">
           Now that I've explained the reason behind your health bar status and suggested next steps,{" "}
           <strong>what next steps do you want to take?</strong>

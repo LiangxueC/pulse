@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from services.data_service import get_invoices, get_bills, get_raw_cash_flow
 
 
-def compute_projection(days: int = 14) -> list[dict]:
+def compute_projection(days: int = 30) -> list[dict]:
     """
     Compute day-by-day projected cash balance using:
     - Starting balance from cash flow data
@@ -12,7 +12,7 @@ def compute_projection(days: int = 14) -> list[dict]:
     """
     # ── Guard: ensure days is a positive integer ──
     if not isinstance(days, int) or days <= 0:
-        days = 14
+        days = 30
 
     cf = get_raw_cash_flow()
     starting_balance = cf.get("projectedLowestBalance", 0)
@@ -53,7 +53,7 @@ def compute_projection(days: int = 14) -> list[dict]:
         elif days_late <= 7:
             expected_day = 7
         else:
-            expected_day = 14
+            expected_day = 30
 
         # Clamp to our projection window
         expected_day = min(expected_day, days)

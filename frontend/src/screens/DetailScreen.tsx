@@ -1,18 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
-import type { Screen, CashFlowDetailResponse, Reason, ModalContent, SuggestedStep } from "../types";
-import { fetchCashFlowDetail, fetchReasonExplanation } from "../data/api";
+import type { Screen, CashFlowDetailResponse, ModalContent, SuggestedStep } from "../types";
+import { fetchCashFlowDetail, fetchStepExplanation } from "../data/api";
 import { CashFlowChart } from "../components/CashFlowChart";
 import { Modal } from "../components/Modal";
 import { DetailSkeleton } from "../components/LoadingSkeleton";
 import { ErrorCard, EmptyState } from "../components/ErrorCard";
+import { PulseAvatar } from "../components/PulseAvatar";
 import "./DetailScreen.css";
 
 interface Props {
   onNavigate: (s: Screen) => void;
   onStepsSelected?: (steps: SuggestedStep[]) => void;
+  completedCategories?: string[];
 }
 
-export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) => {
+export const DetailScreen: React.FC<Props> = ({
+  onNavigate,
+  onStepsSelected,
+  completedCategories = [],
+}) => {
   const [data, setData] = useState<CashFlowDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,28 +29,28 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
   const [addingCustom, setAddingCustom] = useState(false);
   const [customInput, setCustomInput] = useState("");
   const [hideTop, setHideTop] = useState(false);
-  const [showReasons, setShowReasons] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
     setError("");
-    fetchCashFlowDetail()
+    fetchCashFlowDetail(completedCategories)
       .then(setData)
       .catch(() => setError("Failed to load cash flow details. Please try again."))
       .finally(() => setLoading(false));
-  }, []);
+  }, [completedCategories.join(",")]);
 
   useEffect(() => { load(); }, [load]);
 
-  const handleReasonInfo = async (reason: Reason) => {
-    if (reason.modalContent) { setModal(reason.modalContent); return; }
-    setLlmLoading(reason.id);
+  // ── Step info button → calls Gemini ──
+  const handleStepInfo = async (stepId: string, stepText: string) => {
+    setLlmLoading(stepId);
     try {
-      const { explanation } = await fetchReasonExplanation(reason.id);
-      setModal({ title: "Cash Flow Impact", body: [explanation] });
+      const { explanation } = await fetchStepExplanation(stepId);
+      setModal({ title: "Why this step helps", body: [explanation] });
     } catch {
-      setModal({ title: "Cash Flow Impact", body: ["Could not load explanation right now."] });
-    } finally { setLlmLoading(null); }
+      setModal({ title: "Why this step helps", body: [stepText] });
+    } finally {
+      setLlmLoading(null); }
   };
 
   const toggleStep = (id: string) => {
@@ -82,12 +88,12 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
   const { cashFlow, reasons, suggestedNextSteps } = data;
   const canContinue = selectedSteps.size > 0;
 
-  const healthPct = cashFlow.status === "green" ? 100
+  const healthPct = cashFlow.status === "green" ? 60
     : cashFlow.status === "yellow" ? 40 : 10;
   const healthColor = cashFlow.status === "green" ? "#2CA01C"
     : cashFlow.status === "yellow" ? "#F4B000" : "#DC2626";
 
-  const grayReasons = reasons.filter(r => r.actionType === "gray");
+  const grayReasons = reasons.filter((r) => r.actionType === "gray");
 
   return (
     <div className="detail">
@@ -99,44 +105,32 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
 
       <h1 className="detail__heading">Your cash balance status</h1>
 
-      {/* Sticky top section */}
       {!hideTop && (
         <div className="two-col detail__top-section">
-          {/* Balance + health bar */}
           <div className="card detail__balance-card">
             <div className="section-title detail__balance-section-title">
-              PROJECTED LOWEST CASH BALANCE (14 DAYS):
+              PROJECTED LOWEST CASH BALANCE (30 DAYS):
             </div>
             <div className="detail__amount">
               {cashFlow.projectedLowestBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </div>
-
             <div className="detail__health-bar-wrap">
               <div className="detail__health-track">
-                <div
-                  className="detail__health-fill"
-                  style={{ width: `${healthPct}%`, background: healthColor }}
-                />
+                <div className="detail__health-fill" style={{ width: `${healthPct}%`, background: healthColor }} />
               </div>
               <span className="detail__health-pct">{healthPct}%</span>
             </div>
             <div className="detail__health-status">
               <strong>Status:</strong> {cashFlow.statusLabel}
             </div>
-
-            {/* Reasons found button */}
-            <button
-              className="detail__reasons-btn"
-              onClick={() => setShowReasons(r => !r)}
-            >
+            <button className="detail__reasons-btn">
               {grayReasons.length} reason{grayReasons.length !== 1 ? "s" : ""} found
             </button>
           </div>
 
-          {/* Chart */}
           <div className="card detail__chart-card">
             <div className="section-title" style={{ marginBottom: 16 }}>
-              PROJECTED CASH BALANCE OVER NEXT 14 DAYS
+              PROJECTED CASH BALANCE OVER NEXT 30 DAYS
             </div>
             <div className="detail__chart-wrap">
               <CashFlowChart
@@ -149,22 +143,16 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
         </div>
       )}
 
-      {/* Hide/Show toggle */}
       <div className="detail__hide-row">
         <label className="toggle">
-          <input
-            type="checkbox"
-            checked={hideTop}
-            onChange={(e) => setHideTop(e.target.checked)}
-          />
+          <input type="checkbox" checked={hideTop} onChange={(e) => setHideTop(e.target.checked)} />
           <span className="toggle__slider" />
         </label>
         <span>{hideTop ? "Show" : "Hide"} cash balance</span>
       </div>
 
-      {/* Reasons + Steps */}
       <div className="two-col">
-        {/* Reasons */}
+        {/* Reasons — text only, no buttons except green tag */}
         <div className="card">
           <div className="section-title" style={{ marginBottom: 12 }}>REASON</div>
           {reasons.length === 0 ? (
@@ -173,19 +161,16 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
             reasons.map((r) => (
               <div key={r.id} className="reason-row">
                 <span className="reason-row__text">{r.text}</span>
-                <button
-                  className={`reason-tag reason-tag--${r.actionType}`}
-                  onClick={() => handleReasonInfo(r)}
-                  disabled={llmLoading === r.id}
-                >
-                  {llmLoading === r.id ? "Loading…" : r.actionLabel}
-                </button>
+                {/* Only show the green "Action taken" tag — no button for gray reasons */}
+                {r.actionType === "green" && r.actionLabel && (
+                  <span className="reason-tag reason-tag--green">{r.actionLabel}</span>
+                )}
               </div>
             ))
           )}
         </div>
 
-        {/* Suggested Next Steps */}
+        {/* Suggested Next Steps — info button calls Gemini */}
         <div className="card detail__steps-card">
           <div className="detail__steps-header">
             <div className="section-title">SUGGESTED NEXT STEPS</div>
@@ -194,7 +179,7 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
               onClick={handleContinue}
               disabled={!canContinue}
             >
-              Apply suggestions &rsaquo;
+              Apply suggestions ›
             </button>
           </div>
 
@@ -206,14 +191,16 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
                 <div key={s.id} className="detail__step-row" onClick={() => toggleStep(s.id)}>
                   <span className="detail__step-text">{s.text}</span>
                   <div className="detail__step-right">
+                    {/* Info button → Gemini explanation */}
                     <button
                       className="step-row__info"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setModal({ title: "Why This Step Helps", body: [s.text] });
+                        handleStepInfo(s.id, s.text);
                       }}
+                      disabled={llmLoading === s.id}
                     >
-                      i
+                      {llmLoading === s.id ? "…" : "i"}
                     </button>
                     <div className={`detail__step-checkbox${selectedSteps.has(s.id) ? " detail__step-checkbox--checked" : ""}`}>
                       {selectedSteps.has(s.id) && <CheckIcon />}
@@ -259,7 +246,6 @@ export const DetailScreen: React.FC<Props> = ({ onNavigate, onStepsSelected }) =
         </div>
       </div>
 
-      {/* Disclaimer */}
       <p className="detail__disclaimer">
         *Pulse is AI and can make mistakes. Important information should always be checked before proceeding.*
       </p>

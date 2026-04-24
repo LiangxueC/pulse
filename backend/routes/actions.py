@@ -33,7 +33,7 @@ def get_redirect_impact(redirect_id: str):
     new_data = [
         {
             "day": p["day"],
-            "balance": p["balance"] + int(increase * (p["day"] / 14)),
+            "balance": p["balance"] + int(increase * (p["day"] / 30)),
         }
         for p in base
     ]
@@ -92,7 +92,7 @@ def execute_action(body: dict):
             "bullets": [s["name"] for s in pause],
             "impact": (
                 f"Monthly spend reduced by ~${monthly_saving}. "
-                f"Your projected cash floor for the next 14 days is now "
+                f"Your projected cash floor for the next 30 days is now "
                 f"${balance_lift:,.0f} higher than before."
             ),
             "monthlySaving": monthly_saving,
@@ -112,7 +112,7 @@ def execute_action(body: dict):
             ],
             "impact": (
                 f"Estimated monthly savings of ${monthly_saving:,}. "
-                f"Your projected cash floor for the next 14 days is now "
+                f"Your projected cash floor for the next 30 days is now "
                 f"${balance_lift:,.0f} higher than before."
             ),
             "monthlySaving": monthly_saving,
@@ -150,7 +150,7 @@ def execute_action(body: dict):
             "impact": (
                 f"If collected, outstanding invoices totaling ${total_overdue:,.2f} "
                 f"would raise your projected cash floor by approximately "
-                f"${balance_lift:,.0f} over the next 14 days."
+                f"${balance_lift:,.0f} over the next 30 days."
             ),
             "monthlySaving": 0,
             "balanceLift": balance_lift,
@@ -161,7 +161,7 @@ def execute_action(body: dict):
         "category": category,
         "summary": "I've noted your selected action and flagged it for review.",
         "bullets": [step_text] if step_text else ["Action recorded"],
-        "impact": "Monitor your cash balance over the next 14 days to track the effect.",
+        "impact": "Monitor your cash balance over the next 30 days to track the effect.",
         "monthlySaving": 0,
         "balanceLift": 0,
     }
@@ -197,7 +197,6 @@ def close_case(body: dict):
 
     # Cross-platform date format
     label = (
-        f"{today.month}/{today.day}/{str(today.year)[2:]}: "
         f"{', '.join(label_parts).capitalize()}"
     )
 
@@ -211,3 +210,9 @@ def close_case(body: dict):
     _save_cases(cases)
 
     return {"success": True, "case": new_case}
+
+@router.get("/payroll-summary")
+async def get_payroll_summary():
+    from services.llm_service import generate_payroll_summary
+    summary = await generate_payroll_summary()
+    return {"summary": summary}

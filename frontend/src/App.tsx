@@ -14,6 +14,7 @@ import { NextStepsScreen } from "./screens/NextStepsScreen";
 import { ActionChoiceScreen } from "./screens/ActionChoiceScreen";
 import { ArchivedCasesScreen } from "./screens/ArchivedCasesScreen";
 import { TakeActionScreen } from "./screens/TakeActionScreen";
+import { PayrollSummaryScreen } from "./screens/PayrollSummaryScreen";
 import { ActionConfirmationScreen } from "./screens/ActionConfirmationScreen";
 import { DoItMyselfScreen } from "./screens/DoItMyselfScreen";
 import { CashRedirectsScreen } from "./screens/CashRedirectsScreen";
@@ -29,11 +30,18 @@ export default function App() {
   const [selectedSteps, setSelectedSteps] = useState<SuggestedStep[]>([]);
   const [selectedRedirectId, setSelectedRedirectId] = useState<string>("");
   const [skippedSteps, setSkippedSteps] = useState<SuggestedStep[]>([]);
+  // Track which categories have been completed this session
+  const [completedCategories, setCompletedCategories] = useState<string[]>([]);
 
-  // Navigate and optionally update steps atomically
   const navigateTo = (s: Screen, steps?: SuggestedStep[]) => {
     if (steps !== undefined) setSelectedSteps(steps);
     setScreen(s);
+  };
+
+  const markCategoryComplete = (category: string) => {
+    setCompletedCategories((prev) =>
+      prev.includes(category) ? prev : [...prev, category]
+    );
   };
 
   return (
@@ -47,13 +55,17 @@ export default function App() {
         <div className="content">
 
           {screen === "dashboard" && (
-            <DashboardScreen onNavigate={(s) => navigateTo(s)} />
+            <DashboardScreen
+              onNavigate={(s) => navigateTo(s)}
+              completedCategories={completedCategories}
+            />
           )}
 
           {screen === "detail" && (
             <DetailScreen
               onNavigate={(s) => navigateTo(s)}
               onStepsSelected={(steps) => setSelectedSteps(steps)}
+              completedCategories={completedCategories}
             />
           )}
 
@@ -69,7 +81,25 @@ export default function App() {
               selectedSteps={selectedSteps}
               onNavigate={(s) => navigateTo(s)}
               onDoItMyself={(steps) => navigateTo("doItMyself", steps)}
-              onTakeAction={(steps) => navigateTo("actionConfirmation", steps)}
+              onTakeAction={(steps) => {
+                // Subscriptions → full take action flow
+                // Payroll → payroll summary only
+                if (steps[0]?.category === "payroll") {
+                  navigateTo("payrollSummary", steps);
+                } else {
+                  navigateTo("takeAction", steps);
+                }
+              }}
+            />
+          )}
+
+          {screen === "payrollSummary" && (
+            <PayrollSummaryScreen
+              onNavigate={(s) => navigateTo(s)}
+              onFinish={() => {
+                markCategoryComplete("payroll");
+                navigateTo("caseClosed");
+              }}
             />
           )}
 
@@ -79,6 +109,7 @@ export default function App() {
               onNavigate={(s) => navigateTo(s)}
               onFinish={(skipped) => {
                 setSkippedSteps(skipped);
+                markCategoryComplete(selectedSteps[0]?.category ?? "");
                 navigateTo(skipped.length > 0 ? "closingReview" : "caseClosed");
               }}
             />
@@ -90,17 +121,23 @@ export default function App() {
               onNavigate={(s) => navigateTo(s)}
               onFinish={(skipped) => {
                 setSkippedSteps(skipped);
+                markCategoryComplete(selectedSteps[0]?.category ?? "");
                 navigateTo(skipped.length > 0 ? "closingReview" : "caseClosed");
               }}
             />
           )}
 
           {screen === "takeAction" && (
-            <TakeActionScreen
-              selectedSteps={selectedSteps}
-              onNavigate={(s) => navigateTo(s)}
-            />
-          )}
+  <TakeActionScreen
+    selectedSteps={selectedSteps}
+    onNavigate={(s) => navigateTo(s)}
+    onFinish={(skipped) => {
+      setSkippedSteps(skipped);
+      markCategoryComplete(selectedSteps[0]?.category ?? "");
+      navigateTo(skipped.length > 0 ? "closingReview" : "caseClosed");
+    }}
+  />
+)}
 
           {screen === "cashRedirects" && (
             <CashRedirectsScreen
@@ -116,6 +153,7 @@ export default function App() {
               onNavigate={(s) => navigateTo(s)}
               onFinish={(skipped) => {
                 setSkippedSteps(skipped);
+                markCategoryComplete(selectedSteps[0]?.category ?? "");
                 navigateTo(skipped.length > 0 ? "closingReview" : "caseClosed");
               }}
             />
@@ -135,6 +173,15 @@ export default function App() {
               onNavigate={(s) => navigateTo(s)}
               stepsTaken={selectedSteps}
               stepsSkipped={skippedSteps}
+              completedCategories={completedCategories}
+              onStartNewCase={(step) => {
+                // Start a new case — route payroll to summary, subscriptions to full flow
+                if (step.category === "payroll") {
+                  navigateTo("payrollSummary", [step]);
+                } else {
+                  navigateTo("actionChoice", [step]);
+                }
+              }}
             />
           )}
 
@@ -146,13 +193,13 @@ export default function App() {
       </div>
 
       <ChatDrawer
-  messages={messages}
-  loading={chatLoading}
-  onSend={send}
-  autoOpen={true}
-  userName="Angela"
-  issueCount={2}
-/>
+        messages={messages}
+        loading={chatLoading}
+        onSend={send}
+        autoOpen={true}
+        userName="Angela"
+        issueCount={2}
+      />
     </div>
   );
 }
