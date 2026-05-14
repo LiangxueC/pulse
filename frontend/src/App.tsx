@@ -197,7 +197,7 @@ export default function App() {
         loading={chatLoading}
         onSend={send}
         autoOpen={true}
-        userName="Angela"
+        userName="Liangxue"
         issueCount={2}
       />
     </div>

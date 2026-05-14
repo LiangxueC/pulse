@@ -5,6 +5,12 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from routes import dashboard, cashflow, invoices, bills, cases, chat, actions
+from db import engine
+from models import Base
+from seed import seed
+
+Base.metadata.create_all(engine)
+seed()
 
 app = FastAPI(title="Pulse API", version="1.0.0")
 

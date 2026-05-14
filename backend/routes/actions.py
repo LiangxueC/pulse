@@ -1,40 +1,39 @@
 from fastapi import APIRouter
-from services.data_service import load_mock_data
 from datetime import date
+from services.data_service import (
+    get_subscriptions,
+    get_cash_redirects,
+    get_redirect_impact,
+    get_invoices,
+    get_raw_cash_flow,
+)
 
 router = APIRouter()
-_mock = load_mock_data()
 
 
 @router.get("/subscriptions")
 def get_subscription_ranking():
-    return {"subscriptions": _mock["subscriptionRanking"]}
+    return {"subscriptions": get_subscriptions()}
 
 
 @router.get("/cash-redirects")
-def get_cash_redirects():
-    return {"redirects": _mock["cashRedirects"]}
+def get_cash_redirects_endpoint():
+    return {"redirects": get_cash_redirects()}
 
 
 @router.get("/redirect-impact/{redirect_id}")
-def get_redirect_impact(redirect_id: str):
+def get_redirect_impact_endpoint(redirect_id: str):
     if not redirect_id or not redirect_id.strip():
         return {"error": "Missing redirect_id"}
 
-    impacts = _mock.get("redirectImpacts", {})
-    impact = impacts.get(redirect_id)
+    impact = get_redirect_impact(redirect_id)
     if not impact:
         return {"error": f"Impact not found for redirect_id: {redirect_id}"}
 
-    cf = _mock["cashFlow"]
-    base = cf["projectedBalanceOverTime"]
+    base = get_raw_cash_flow()["projectedBalanceOverTime"]
     increase = impact["balanceIncrease"]
-
     new_data = [
-        {
-            "day": p["day"],
-            "balance": p["balance"] + int(increase * (p["day"] / 30)),
-        }
+        {"day": p["day"], "balance": p["balance"] + int(increase * (p["day"] / 30))}
         for p in base
     ]
 
@@ -50,7 +49,6 @@ def get_redirect_impact(redirect_id: str):
 
 @router.post("/execute")
 def execute_action(body: dict):
-    # ── Input validation ──
     category = body.get("category", "").strip()
     step_text = body.get("stepText", "").strip()
 
@@ -64,9 +62,8 @@ def execute_action(body: dict):
             "balanceLift": 0,
         }
 
-    subs = _mock.get("subscriptionRanking", [])
-
     if category == "subscriptions":
+        subs = get_subscriptions()
         keep = [s for s in subs if s.get("recommended")]
         pause = [s for s in subs if not s.get("recommended")]
 
@@ -120,7 +117,7 @@ def execute_action(body: dict):
         }
 
     elif category == "invoices":
-        invoices = _mock.get("outstandingInvoices", [])
+        invoices = get_invoices()
         overdue = [i for i in invoices if i.get("daysOverdue", 0) > 0]
 
         if not overdue:
@@ -156,7 +153,6 @@ def execute_action(body: dict):
             "balanceLift": balance_lift,
         }
 
-    # ── Fallback for unknown category ──
     return {
         "category": category,
         "summary": "I've noted your selected action and flagged it for review.",
@@ -169,7 +165,7 @@ def execute_action(body: dict):
 
 @router.post("/close")
 def close_case(body: dict):
-    from routes.cases import _load_cases, _save_cases
+    from routes.cases import add_case
 
     steps_taken = body.get("stepsTaken", [])
     steps_skipped = body.get("stepsSkipped", [])
@@ -178,8 +174,6 @@ def close_case(body: dict):
         steps_taken = []
     if not isinstance(steps_skipped, list):
         steps_skipped = []
-
-    today = date.today()
 
     topics = list({
         s.get("category", "general")
@@ -194,22 +188,10 @@ def close_case(body: dict):
     }
 
     label_parts = [topic_labels.get(t, t) for t in topics] if topics else ["general review"]
+    label = ", ".join(label_parts).capitalize()
 
-    # Cross-platform date format
-    label = (
-        f"{', '.join(label_parts).capitalize()}"
-    )
+    return add_case({"date": date.today().isoformat(), "label": label})
 
-    cases = _load_cases()
-    new_case = {
-        "id": f"case{len(cases) + 1}",
-        "date": today.isoformat(),
-        "label": label,
-    }
-    cases.insert(0, new_case)
-    _save_cases(cases)
-
-    return {"success": True, "case": new_case}
 
 @router.get("/payroll-summary")
 async def get_payroll_summary():
